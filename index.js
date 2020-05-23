@@ -1,3 +1,35 @@
+// Action types
+const actionTypes = [
+  {
+    type: 'ADD_TODO',
+    todo: {
+      id: 0,
+      name: 'learn Redux',
+      complete: false,
+    },
+  },
+  {
+    type: 'REMOVE_TODO',
+    id: 0,
+  },
+  {
+    type: 'TOGGLE_TODO',
+    id: 0,
+  },
+  {
+    type: 'ADD_GOAL',
+    goal: {
+      id: 0,
+      name: 'Run a marathon',
+      complete: false,
+    },
+  },
+  {
+    type: 'REMOVE_GOAL',
+    id: 0,
+  },
+];
+
 function createStore() {
   // 1. The state.
   let state;
