@@ -38,6 +38,44 @@ const ADD_GOAL = 'ADD_GOAL';
 const REMOVE_GOAL = 'REMOVE_GOAL';
 const TOGGLE_GOAL = 'TOGGLE_GOAL';
 
+// Action creators
+function addTodo(todo) {
+  return {
+    type: 'ADD_TODO',
+    todo: { ...todo },
+  };
+}
+function removeTodo(id) {
+  return {
+    type: 'REMOVE_TODO',
+    id,
+  };
+}
+function toggleTodo(id) {
+  return {
+    type: 'TOGGLE_TODO',
+    id,
+  };
+}
+function addGoal(goal) {
+  return {
+    type: 'ADD_GOAL',
+    goal: { ...goal },
+  };
+}
+function removeGoal(id) {
+  return {
+    type: 'REMOVE_GOAL',
+    id,
+  };
+}
+function toggleGoal(id) {
+  return {
+    type: 'TOGGLE_GOAL',
+    id,
+  };
+}
+
 // Reducer function
 function todos(state = [], action) {
   switch (action.type) {
@@ -93,60 +131,46 @@ store.subscribe(() => {
   console.log('The new state is: ', store.getState());
 });
 
-store.dispatch({
-  type: 'ADD_TODO',
-  todo: {
+store.dispatch(
+  addTodo({
     id: 0,
     name: 'Walk the dog',
     complete: false,
-  },
-});
+  })
+);
 
-store.dispatch({
-  type: 'ADD_TODO',
-  todo: {
+store.dispatch(
+  addTodo({
     id: 1,
     name: 'Wash the car',
     complete: false,
-  },
-});
+  })
+);
 
-store.dispatch({
-  type: 'ADD_TODO',
-  todo: {
+store.dispatch(
+  addTodo({
     id: 2,
     name: 'Go to the gym',
     complete: true,
-  },
-});
+  })
+);
 
-store.dispatch({
-  type: 'REMOVE_TODO',
-  id: 1,
-});
+store.dispatch(removeTodo(1));
 
-store.dispatch({
-  type: 'TOGGLE_TODO',
-  id: 0,
-});
+store.dispatch(toggleTodo(0));
 
-store.dispatch({
-  type: 'ADD_GOAL',
-  goal: {
+store.dispatch(
+  addGoal({
     id: 0,
     name: 'Learn Redux',
-  },
-});
+  })
+);
 
-store.dispatch({
-  type: 'ADD_GOAL',
-  goal: {
+store.dispatch(
+  addGoal({
     id: 1,
     name: 'Lose 20 pounds',
-  },
-});
+  })
+);
 
-store.dispatch({
-  type: 'REMOVE_GOAL',
-  id: 0,
-});
+store.dispatch(removeGoal(0));
