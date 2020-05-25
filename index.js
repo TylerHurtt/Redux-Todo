@@ -1,50 +1,4 @@
-function todos(state = [], action) {
-  switch (action.type) {
-    case 'ADD_TODO':
-      return state.concat([action.todo]);
-    case 'REMOVE_TODO':
-      return state.filter((todo) => todo.id !== action.id);
-    case 'TOGGLE_TODO':
-      return (state = state.map((todo) =>
-        todo.id !== action.id
-          ? todo
-          : {
-              ...todo,
-              complete: !todo.complete,
-            }
-      ));
-    default:
-      return state;
-  }
-}
-
-function goals(state = [], action) {
-  switch (action.type) {
-    case 'ADD_GOAL':
-      return state.concat([action.goal]);
-    case 'REMOVE_GOAL':
-      return state.filter((goal) => goal.id !== action.id);
-    case 'TOGGLE_GOAL':
-      return (state = state.map((goal) =>
-        goal.id !== action.id
-          ? goal
-          : {
-              ...goal,
-              complete: !goal.complete,
-            }
-      ));
-    default:
-      return state;
-  }
-}
-
-function app(state = {}, action) {
-  return {
-    todos: todos(state.todos, action),
-    goals: goals(state.goals, action),
-  };
-}
-
+/* Library Code */
 function createStore(reducer) {
   // 1. The state.
   let state;
@@ -72,6 +26,64 @@ function createStore(reducer) {
     getState,
     subscribe,
     dispatch,
+  };
+}
+
+/* App Code */
+// Constants
+const ADD_TODO = 'ADD_TODO';
+const REMOVE_TODO = 'REMOVE_TODO';
+const TOGGLE_TODO = 'TOGGLE_TODO';
+const ADD_GOAL = 'ADD_GOAL';
+const REMOVE_GOAL = 'REMOVE_GOAL';
+const TOGGLE_GOAL = 'TOGGLE_GOAL';
+
+// Reducer function
+function todos(state = [], action) {
+  switch (action.type) {
+    case ADD_TODO:
+      return state.concat([action.todo]);
+    case REMOVE_TODO:
+      return state.filter((todo) => todo.id !== action.id);
+    case TOGGLE_TODO:
+      return (state = state.map((todo) =>
+        todo.id !== action.id
+          ? todo
+          : {
+              ...todo,
+              complete: !todo.complete,
+            }
+      ));
+    default:
+      return state;
+  }
+}
+
+// Reducer function
+function goals(state = [], action) {
+  switch (action.type) {
+    case ADD_GOAL:
+      return state.concat([action.goal]);
+    case REMOVE_GOAL:
+      return state.filter((goal) => goal.id !== action.id);
+    case TOGGLE_GOAL:
+      return (state = state.map((goal) =>
+        goal.id !== action.id
+          ? goal
+          : {
+              ...goal,
+              complete: !goal.complete,
+            }
+      ));
+    default:
+      return state;
+  }
+}
+
+function app(state = {}, action) {
+  return {
+    todos: todos(state.todos, action),
+    goals: goals(state.goals, action),
   };
 }
 
