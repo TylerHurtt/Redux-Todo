@@ -39,37 +39,37 @@ const REMOVE_GOAL = 'REMOVE_GOAL';
 const TOGGLE_GOAL = 'TOGGLE_GOAL';
 
 // Action creators
-function addTodo(todo) {
+function addTodoAction(todo) {
   return {
     type: 'ADD_TODO',
     todo: { ...todo },
   };
 }
-function removeTodo(id) {
+function removeTodoAction(id) {
   return {
     type: 'REMOVE_TODO',
     id,
   };
 }
-function toggleTodo(id) {
+function toggleTodoAction(id) {
   return {
     type: 'TOGGLE_TODO',
     id,
   };
 }
-function addGoal(goal) {
+function addGoalAction(goal) {
   return {
     type: 'ADD_GOAL',
     goal: { ...goal },
   };
 }
-function removeGoal(id) {
+function removeGoalAction(id) {
   return {
     type: 'REMOVE_GOAL',
     id,
   };
 }
-function toggleGoal(id) {
+function toggleGoalAction(id) {
   return {
     type: 'TOGGLE_GOAL',
     id,
@@ -125,52 +125,95 @@ function app(state = {}, action) {
   };
 }
 
+// Dom Code
+let todoId = -1;
+let goalId = -1;
+function generateId(listString) {
+  console.log(listString);
+  if (listString !== 'todo' && listString !== 'goal') throw new error();
+  return listString === 'todo' ? (todoId += 1) : (goalId += 1);
+}
+const todoInput = document.getElementById('todo');
+function addTodo() {
+  const name = todoInput.value;
+  if (name !== '') {
+    todoInput.value = '';
+    store.dispatch(
+      addTodoAction({
+        id: generateId('todo'),
+        name,
+        complete: false,
+      })
+    );
+  }
+}
+const goalInput = document.getElementById('goal');
+function addGoal() {
+  const name = goalInput.value;
+  if (name !== '') {
+    goalInput.value = '';
+    store.dispatch(
+      addGoalAction({
+        id: generateId('goal'),
+        name,
+        complete: false,
+      })
+    );
+  }
+}
+
+const todoButton = document.getElementById('todo-btn');
+const goalButton = document.getElementById('goal-btn');
+
+todoButton.addEventListener('click', addTodo);
+goalButton.addEventListener('click', addGoal);
+
 const store = createStore(app);
 
 store.subscribe(() => {
   console.log('The new state is: ', store.getState());
 });
 
-store.dispatch(
-  addTodo({
-    id: 0,
-    name: 'Walk the dog',
-    complete: false,
-  })
-);
+// store.dispatch(
+//   addTodoAction({
+//     id: 0,
+//     name: 'Walk the dog',
+//     complete: false,
+//   })
+// );
 
-store.dispatch(
-  addTodo({
-    id: 1,
-    name: 'Wash the car',
-    complete: false,
-  })
-);
+// store.dispatch(
+//   addTodoAction({
+//     id: 1,
+//     name: 'Wash the car',
+//     complete: false,
+//   })
+// );
 
-store.dispatch(
-  addTodo({
-    id: 2,
-    name: 'Go to the gym',
-    complete: true,
-  })
-);
+// store.dispatch(
+//   addTodoAction({
+//     id: 2,
+//     name: 'Go to the gym',
+//     complete: true,
+//   })
+// );
 
-store.dispatch(removeTodo(1));
+// store.dispatch(removeTodoAction(1));
 
-store.dispatch(toggleTodo(0));
+// store.dispatch(toggleTodoAction(0));
 
-store.dispatch(
-  addGoal({
-    id: 0,
-    name: 'Learn Redux',
-  })
-);
+// store.dispatch(
+//   addGoalAction({
+//     id: 0,
+//     name: 'Learn Redux',
+//   })
+// );
 
-store.dispatch(
-  addGoal({
-    id: 1,
-    name: 'Lose 20 pounds',
-  })
-);
-
-store.dispatch(removeGoal(0));
+// store.dispatch(
+//   addGoalAction({
+//     id: 1,
+//     name: 'Lose 20 pounds',
+//   })
+// );
+//
+// store.dispatch(removeGoal(0));
