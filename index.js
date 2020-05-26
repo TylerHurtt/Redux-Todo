@@ -76,6 +76,19 @@ function toggleGoalAction(id) {
   };
 }
 
+// Custom dispatch
+function checkAndDispatch(store, action) {
+  if (
+    action.type === ADD_TODO &&
+    action.todo.name.toLowerCase().includes('bitcoin')
+  )
+    return alert('nope not a good idea');
+  else if (action.type === ADD_GOAL && action.goal.name.includes('bitcoin'))
+    return alert('nope not a good idea');
+  else store.dispatch(action);
+  s;
+}
+
 // Reducer function
 function todos(state = [], action) {
   switch (action.type) {
@@ -151,7 +164,8 @@ function addTodo() {
   const name = todoInput.value;
   if (name !== '') {
     todoInput.value = '';
-    store.dispatch(
+    checkAndDispatch(
+      store,
       addTodoAction({
         id: generateId('todo'),
         name,
@@ -165,7 +179,8 @@ function addGoal() {
   const name = goalInput.value;
   if (name !== '') {
     goalInput.value = '';
-    store.dispatch(
+    checkAndDispatch(
+      store,
       addGoalAction({
         id: generateId('goal'),
         name,
@@ -196,7 +211,7 @@ function addTodoToDOM(todo) {
   const node = document.createElement('li');
   const text = document.createTextNode(todo.name);
   const removeBtn = createRemoveBtn(() =>
-    store.dispatch(removeTodoAction(todo.id))
+    checkAndDispatch(store, removeTodoAction(todo.id))
   );
 
   node.appendChild(text);
@@ -204,7 +219,7 @@ function addTodoToDOM(todo) {
 
   node.style.textDecoration = todo.complete ? 'line-through' : 'none';
   node.addEventListener('click', () =>
-    store.dispatch(toggleTodoAction(todo.id))
+    checkAndDispatch(store, toggleTodoAction(todo.id))
   );
 
   todoList.appendChild(node);
@@ -215,7 +230,7 @@ function addGoalToDOM(goal) {
   const node = document.createElement('li');
   const text = document.createTextNode(goal.name);
   const removeBtn = createRemoveBtn(() =>
-    store.dispatch(removeGoalAction(goal.id))
+    checkAndDispatch(store, removeGoalAction(goal.id))
   );
 
   node.appendChild(text);
@@ -223,7 +238,7 @@ function addGoalToDOM(goal) {
 
   node.style.textDecoration = goal.complete ? 'line-through' : 'none';
   node.addEventListener('click', () =>
-    store.dispatch(toggleGoalAction(goal.id))
+    checkAndDispatch(store, toggleGoalAction(goal.id))
   );
 
   goalList.appendChild(node);
