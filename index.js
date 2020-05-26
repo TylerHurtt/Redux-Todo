@@ -1,33 +1,33 @@
 /* Library Code */
-function createStore(reducer) {
-  // 1. The state.
-  let state;
-  // Array of listener functions
-  let listeners = [];
-  // 2. Get State.
-  const getState = () => state;
-  // 3. Listen for state changes.
-  const subscribe = (listener) => {
-    // push listener callback into listeners array
-    listeners.push(listener);
-    // return unsubscribe function
-    return () => {
-      // remove listener from listeners array
-      listeners = listeners.filter((l) => l !== listener);
-    };
-  };
-  // 4. Update state.
-  const dispatch = (action) => {
-    state = reducer(state, action);
-    listeners.forEach((listener) => listener());
-  };
+// function createStore(reducer) {
+//   // 1. The state.
+//   let state;
+//   // Array of listener functions
+//   let listeners = [];
+//   // 2. Get State.
+//   const getState = () => state;
+//   // 3. Listen for state changes.
+//   const subscribe = (listener) => {
+//     // push listener callback into listeners array
+//     listeners.push(listener);
+//     // return unsubscribe function
+//     return () => {
+//       // remove listener from listeners array
+//       listeners = listeners.filter((l) => l !== listener);
+//     };
+//   };
+//   // 4. Update state.
+//   const dispatch = (action) => {
+//     state = reducer(state, action);
+//     listeners.forEach((listener) => listener());
+//   };
 
-  return {
-    getState,
-    subscribe,
-    dispatch,
-  };
-}
+//   return {
+//     getState,
+//     subscribe,
+//     dispatch,
+//   };
+// }
 
 /* App Code */
 // Constants
@@ -118,12 +118,25 @@ function goals(state = [], action) {
   }
 }
 
-function app(state = {}, action) {
-  return {
-    todos: todos(state.todos, action),
-    goals: goals(state.goals, action),
-  };
-}
+// Combine Reducers
+// function app(state = {}, action) {
+//   return {
+//     todos: todos(state.todos, action),
+//     goals: goals(state.goals, action),
+//   };
+// }
+
+const store = Redux.createStore(Redux.combineReducers({ todos, goals }));
+
+store.subscribe(() => {
+  const { todos, goals } = store.getState();
+
+  todoList.innerHTML = '';
+  goalList.innerHTML = '';
+
+  todos.forEach((todo) => addTodoToDOM(todo));
+  goals.forEach((goal) => addGoalToDOM(goal));
+});
 
 // Dom Code
 let todoId = -1;
@@ -215,59 +228,3 @@ function addGoalToDOM(goal) {
 
   goalList.appendChild(node);
 }
-
-const store = createStore(app);
-
-store.subscribe(() => {
-  const { todos, goals } = store.getState();
-
-  todoList.innerHTML = '';
-  goalList.innerHTML = '';
-
-  todos.forEach((todo) => addTodoToDOM(todo));
-  goals.forEach((goal) => addGoalToDOM(goal));
-});
-
-// store.dispatch(
-//   addTodoAction({
-//     id: 0,
-//     name: 'Walk the dog',
-//     complete: false,
-//   })
-// );
-
-// store.dispatch(
-//   addTodoAction({
-//     id: 1,
-//     name: 'Wash the car',
-//     complete: false,
-//   })
-// );
-
-// store.dispatch(
-//   addTodoAction({
-//     id: 2,
-//     name: 'Go to the gym',
-//     complete: true,
-//   })
-// );
-
-// store.dispatch(removeTodoAction(1));
-
-// store.dispatch(toggleTodoAction(0));
-
-// store.dispatch(
-//   addGoalAction({
-//     id: 0,
-//     name: 'Learn Redux',
-//   })
-// );
-
-// store.dispatch(
-//   addGoalAction({
-//     id: 1,
-//     name: 'Lose 20 pounds',
-//   })
-// );
-//
-// store.dispatch(removeGoal(0));
