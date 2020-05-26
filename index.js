@@ -168,10 +168,43 @@ const goalButton = document.getElementById('goal-btn');
 todoButton.addEventListener('click', addTodo);
 goalButton.addEventListener('click', addGoal);
 
+const todoList = document.getElementById('todo-list');
+function addTodoToDOM(todo) {
+  const node = document.createElement('li');
+  const text = document.createTextNode(todo.name);
+  node.appendChild(text);
+
+  node.style.textDecoration = todo.complete ? 'line-through' : 'none';
+  node.addEventListener('click', () =>
+    store.dispatch(toggleTodoAction(todo.id))
+  );
+
+  todoList.appendChild(node);
+}
+const goalList = document.getElementById('goal-list');
+function addGoalToDOM(goal) {
+  const node = document.createElement('li');
+  const text = document.createTextNode(goal.name);
+  node.appendChild(text);
+
+  node.style.textDecoration = goal.complete ? 'line-through' : 'none';
+  node.addEventListener('click', () =>
+    store.dispatch(toggleGoalAction(goal.id))
+  );
+
+  goalList.appendChild(node);
+}
+
 const store = createStore(app);
 
 store.subscribe(() => {
-  console.log('The new state is: ', store.getState());
+  const { todos, goals } = store.getState();
+
+  todoList.innerHTML = '';
+  goalList.innerHTML = '';
+
+  todos.forEach((todo) => addTodoToDOM(todo));
+  goals.forEach((goal) => addGoalToDOM(goal));
 });
 
 // store.dispatch(
