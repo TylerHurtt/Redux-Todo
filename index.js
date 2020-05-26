@@ -88,7 +88,7 @@ function toggleGoalAction(id) {
 //   else store.dispatch(action);
 // }
 
-// Middleware
+/* Middleware */
 // ES5 currying
 // function checker(store) {
 //   return function (next) {
@@ -117,6 +117,17 @@ const checker = (store) => (next) => (action) => {
   return next(action);
 };
 
+// Logger
+const logger = (store) => (next) => (action) => {
+  console.group(action.type);
+  console.log('The action is: ', action.type);
+  const result = next(action);
+  console.log('The new state is: ', store.getState());
+  console.groupEnd();
+  return result;
+};
+
+/* Reducers */
 // Reducer function
 function todos(state = [], action) {
   switch (action.type) {
@@ -169,7 +180,7 @@ function goals(state = [], action) {
 
 const store = Redux.createStore(
   Redux.combineReducers({ todos, goals }),
-  Redux.applyMiddleware(checker)
+  Redux.applyMiddleware(checker, logger)
 );
 
 store.subscribe(() => {
@@ -186,7 +197,6 @@ store.subscribe(() => {
 let todoId = -1;
 let goalId = -1;
 function generateId(listString) {
-  console.log(listString);
   if (listString !== 'todo' && listString !== 'goal') throw new error();
   return listString === 'todo' ? (todoId += 1) : (goalId += 1);
 }
@@ -248,7 +258,7 @@ function addTodoToDOM(todo) {
 
   node.style.textDecoration = todo.complete ? 'line-through' : 'none';
   node.addEventListener('click', () =>
-    store.dispatch(roggleTodoAction(todo.id))
+    store.dispatch(toggleTodoAction(todo.id))
   );
 
   todoList.appendChild(node);
