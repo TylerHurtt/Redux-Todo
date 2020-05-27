@@ -29,6 +29,31 @@
     <div id="app"></div>
 
     <script type="text/babel">
+      function List({ items, removeItem, toggleComplete }) {
+        return (
+          <ul>
+            {items.map((item) => (
+              <li key={item.id}>
+                <span
+                  style={{
+                    textDecoration: item.complete ? 'line-through' : 'none',
+                  }}
+                  onClick={() => toggleComplete(item)}
+                >
+                  {item.name}
+                </span>
+                <button
+                  onClick={() => removeItem(item)}
+                  style={{ color: 'white', backgroundColor: 'red ' }}
+                >
+                  X
+                </button>
+              </li>
+            ))}
+          </ul>
+        );
+      }
+
       class Todos extends React.Component {
         addItem = (e) => {
           e.preventDefault();
@@ -40,6 +65,12 @@
             complete: false,
           };
           this.props.store.dispatch(addTodoAction(todo));
+        };
+        removeItem = (item) => {
+          this.props.store.dispatch(removeTodoAction(item.id));
+        };
+        toggleComplete = (item) => {
+          this.props.store.dispatch(toggleTodoAction(item.id));
         };
         render() {
           return (
@@ -53,9 +84,11 @@
               <button id='todo-btn' onClick={this.addItem}>
                 Add Todo
               </button>
-              <ul>
-                <li>todo</li>
-              </ul>
+              <List
+                items={this.props.todos}
+                removeItem={this.removeItem}
+                toggleComplete={this.toggleComplete}
+              />
             </div>
           );
         }
@@ -73,6 +106,12 @@
           };
           this.props.store.dispatch(addGoalAction(goal));
         };
+        removeItem = (item) => {
+          this.props.store.dispatch(removeGoalAction(item.id));
+        };
+        toggleComplete = (item) => {
+          this.props.store.dispatch(toggleGoalAction(item.id));
+        };
         render() {
           return (
             <div>
@@ -83,22 +122,32 @@
                 placeholder='Add Goal'
               />
               <button id='goal-btn' onClick={this.addItem}>
-                Add Todo
+                Add Goal
               </button>
-              <ul>
-                <li>goal</li>
-              </ul>
+              <List
+                items={this.props.goals}
+                removeItem={this.removeItem}
+                toggleComplete={this.toggleComplete}
+              />
             </div>
           );
         }
       }
 
       class App extends React.Component {
+        componentDidMount() {
+          const { store } = this.props;
+
+          store.subscribe(() => this.forceUpdate());
+        }
+
         render() {
+          const { store } = this.props;
+          const { todos, goals } = store.getState();
           return (
             <div>
-              <Todos store={this.props.store} />
-              <Goals store={this.props.store} />
+              <Todos store={store} todos={todos} />
+              <Goals store={store} goals={goals} />
             </div>
           );
         }
