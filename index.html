@@ -24,5 +24,44 @@
 
     <h2>Goal list</h2>
     <ul id="goal-list"></ul>
+
+    <hr />
+    <div id="app"></div>
+
+    <script type="text/babel">
+      function Todos(props) {
+        return (
+          <div>
+            <h2>Todo List</h2>
+            <ul>
+              <li>todo</li>
+            </ul>
+          </div>
+        );
+      }
+
+      function Goals(props) {
+        return (
+          <div>
+            <h2>Goal List</h2>
+            <ul>
+              <li>goal</li>
+            </ul>
+          </div>
+        );
+      }
+
+      class App extends React.Component {
+        render() {
+          return (
+            <div>
+              <Todos />
+              <Goals />
+            </div>
+          );
+        }
+      }
+      ReactDOM.render(<App />, document.getElementById('app'));
+    </script>
   </body>
 </html>
