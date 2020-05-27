@@ -4,14 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TODOS & GOALS</title>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"
-      defer
-    ></script>
+    <script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
     <script src="index.js" defer></script>
   </head>
   <body>
-    <h1 class="header">TODOS</h1>
+    <!-- Vanilla JS HTML -->
+    <!-- <h1 class="header">TODOS</h1>
     <input id="todo" type="text" placeholder="Add Todo" />
     <button id="todo-btn">Add Todo</button>
 
@@ -24,5 +25,137 @@
 
     <h2>Goal list</h2>
     <ul id="goal-list"></ul>
+
+    <hr /> -->
+
+    <div id="app"></div>
+
+    <!-- React Code -->
+    <script type="text/babel">
+      function List({ items, removeItem, toggleComplete }) {
+        return (
+          <ul>
+            {items.map((item) => (
+              <li key={item.id}>
+                <span
+                  style={{
+                    textDecoration: item.complete ? 'line-through' : 'none',
+                  }}
+                  onClick={() => toggleComplete(item)}
+                >
+                  {item.name}
+                </span>
+                <button
+                  onClick={() => removeItem(item)}
+                  style={{ color: 'white', backgroundColor: 'red ' }}
+                >
+                  X
+                </button>
+              </li>
+            ))}
+          </ul>
+        );
+      }
+
+      class Todos extends React.Component {
+        addItem = (e) => {
+          e.preventDefault();
+          const name = this.input.value;
+          this.input.value = '';
+          const todo = {
+            id: generateId('todo'),
+            name,
+            complete: false,
+          };
+          this.props.store.dispatch(addTodoAction(todo));
+        };
+        removeItem = (item) => {
+          this.props.store.dispatch(removeTodoAction(item.id));
+        };
+        toggleComplete = (item) => {
+          this.props.store.dispatch(toggleTodoAction(item.id));
+        };
+        render() {
+          return (
+            <div>
+              <h2>Todo List</h2>
+              <input
+                type='text'
+                ref={(input) => (this.input = input)}
+                placeholder='Add Todo'
+              />
+              <button id='todo-btn' onClick={this.addItem}>
+                Add Todo
+              </button>
+              <List
+                items={this.props.todos}
+                removeItem={this.removeItem}
+                toggleComplete={this.toggleComplete}
+              />
+            </div>
+          );
+        }
+      }
+
+      class Goals extends React.Component {
+        addItem = (e) => {
+          e.preventDefault();
+          const name = this.input.value;
+          this.input.value = '';
+          const goal = {
+            id: generateId('goal'),
+            name,
+            complete: false,
+          };
+          this.props.store.dispatch(addGoalAction(goal));
+        };
+        removeItem = (item) => {
+          this.props.store.dispatch(removeGoalAction(item.id));
+        };
+        toggleComplete = (item) => {
+          this.props.store.dispatch(toggleGoalAction(item.id));
+        };
+        render() {
+          return (
+            <div>
+              <h2>Goal List</h2>
+              <input
+                type='text'
+                ref={(input) => (this.input = input)}
+                placeholder='Add Goal'
+              />
+              <button id='goal-btn' onClick={this.addItem}>
+                Add Goal
+              </button>
+              <List
+                items={this.props.goals}
+                removeItem={this.removeItem}
+                toggleComplete={this.toggleComplete}
+              />
+            </div>
+          );
+        }
+      }
+
+      class App extends React.Component {
+        componentDidMount() {
+          const { store } = this.props;
+
+          store.subscribe(() => this.forceUpdate());
+        }
+
+        render() {
+          const { store } = this.props;
+          const { todos, goals } = store.getState();
+          return (
+            <div>
+              <Todos store={store} todos={todos} />
+              <Goals store={store} goals={goals} />
+            </div>
+          );
+        }
+      }
+      ReactDOM.render(<App store={store} />, document.getElementById('app'));
+    </script>
   </body>
 </html>
