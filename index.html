@@ -42,7 +42,7 @@
                   style={{
                     textDecoration: item.complete ? 'line-through' : 'none',
                   }}
-                  onClick={() => toggleComplete(item)}
+                  onClick={toggleComplete && (() => toggleComplete(item))}
                 >
                   {item.name}
                 </span>
@@ -72,9 +72,17 @@
         };
         removeItem = (item) => {
           this.props.store.dispatch(removeTodoAction(item.id));
+          API.deleteTodo(item.id).catch(() => {
+            this.props.store.dispatch(addTodoAction(item));
+            alert('An error occurred, please try again.');
+          });
         };
         toggleComplete = (item) => {
           this.props.store.dispatch(toggleTodoAction(item.id));
+          API.saveTodoToggle(item.id).catch(() => {
+            this.props.store.dispatch(toggleTodoAction(item.id));
+            alert('An error occurred, please try again.');
+          });
         };
         render() {
           return (
@@ -112,9 +120,10 @@
         };
         removeItem = (item) => {
           this.props.store.dispatch(removeGoalAction(item.id));
-        };
-        toggleComplete = (item) => {
-          this.props.store.dispatch(toggleGoalAction(item.id));
+          API.deleteGoal(item.id).catch(() => {
+            this.props.store.dispatch(addGoalAction(item.id));
+            alert('An error occurred, please try again.');
+          });
         };
         render() {
           return (
@@ -128,11 +137,7 @@
               <button id='goal-btn' onClick={this.addItem}>
                 Add Goal
               </button>
-              <List
-                items={this.props.goals}
-                removeItem={this.removeItem}
-                toggleComplete={this.toggleComplete}
-              />
+              <List items={this.props.goals} removeItem={this.removeItem} />
             </div>
           );
         }
@@ -144,7 +149,7 @@
 
           Promise.all([API.fetchTodos(), API.fetchGoals()]).then(
             ([todos, goals]) => {
-              store.dispatch(recieveItemsAction(todos, goals));
+              store.dispatch(receiveItemsAction(todos, goals));
             }
           );
 

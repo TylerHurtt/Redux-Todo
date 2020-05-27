@@ -37,7 +37,7 @@ const TOGGLE_TODO = 'TOGGLE_TODO';
 const ADD_GOAL = 'ADD_GOAL';
 const REMOVE_GOAL = 'REMOVE_GOAL';
 const TOGGLE_GOAL = 'TOGGLE_GOAL';
-const RECIEVE_ITEMS = 'RECIEVE_ITEMS';
+const RECEIVE_ITEMS = 'RECEIVE_ITEMS';
 
 // Action creators
 function addTodoAction(todo) {
@@ -76,9 +76,9 @@ function toggleGoalAction(id) {
     id,
   };
 }
-function recieveItemsAction(todos, goals) {
+function receiveItemsAction(todos, goals) {
   return {
-    type: 'RECIEVE_ITEMS',
+    type: 'RECEIVE_ITEMS',
     todos,
     goals,
   };
@@ -152,7 +152,7 @@ function todos(state = [], action) {
               complete: !todo.complete,
             }
       ));
-    case RECIEVE_ITEMS:
+    case RECEIVE_ITEMS:
       return state.concat(action.todos);
     default:
       return state;
@@ -175,7 +175,7 @@ function goals(state = [], action) {
               complete: !goal.complete,
             }
       ));
-    case RECIEVE_ITEMS:
+    case RECEIVE_ITEMS:
       return state.concat(action.goals);
     default:
       return state;
@@ -184,7 +184,7 @@ function goals(state = [], action) {
 
 function loading(state = true, action) {
   switch (action.type) {
-    case RECIEVE_ITEMS:
+    case RECEIVE_ITEMS:
       return (state = false);
     default:
       return state;
