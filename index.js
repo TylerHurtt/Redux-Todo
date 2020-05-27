@@ -183,102 +183,104 @@ const store = Redux.createStore(
   Redux.applyMiddleware(checker, logger)
 );
 
-store.subscribe(() => {
-  const { todos, goals } = store.getState();
+/* Vanilla JS subscribe */
+// store.subscribe(() => {
+//   const { todos, goals } = store.getState();
 
-  todoList.innerHTML = '';
-  goalList.innerHTML = '';
+//   todoList.innerHTML = '';
+//   goalList.innerHTML = '';
 
-  todos.forEach((todo) => addTodoToDOM(todo));
-  goals.forEach((goal) => addGoalToDOM(goal));
-});
+//   todos.forEach((todo) => addTodoToDOM(todo));
+//   goals.forEach((goal) => addGoalToDOM(goal));
+// });
 
-// Dom Code
-let todoId = -1;
-let goalId = -1;
 function generateId(listString) {
   if (listString !== 'todo' && listString !== 'goal') throw new error();
-  return listString === 'todo' ? (todoId += 1) : (goalId += 1);
-}
-const todoInput = document.getElementById('todo');
-function addTodo() {
-  const name = todoInput.value;
-  if (name !== '') {
-    todoInput.value = '';
-    store.dispatch(
-      addTodoAction({
-        id: generateId('todo'),
-        name,
-        complete: false,
-      })
-    );
-  }
-}
-const goalInput = document.getElementById('goal');
-function addGoal() {
-  const name = goalInput.value;
-  if (name !== '') {
-    goalInput.value = '';
-    store.dispatch(
-      addGoalAction({
-        id: generateId('goal'),
-        name,
-        complete: false,
-      })
-    );
-  }
+  return listString === 'todo'
+    ? store.getState().todos.length
+    : store.getState().goals.length;
 }
 
-const todoButton = document.getElementById('todo-btn');
-const goalButton = document.getElementById('goal-btn');
+// Dom Code
+// const todoInput = document.getElementById('todo');
+// function addTodo() {
+//   const name = todoInput.value;
+//   if (name !== '') {
+//     todoInput.value = '';
+//     store.dispatch(
+//       addTodoAction({
+//         id: generateId('todo'),
+//         name,
+//         complete: false,
+//       })
+//     );
+//   }
+// }
+// const goalInput = document.getElementById('goal');
+// function addGoal() {
+//   const name = goalInput.value;
+//   if (name !== '') {
+//     goalInput.value = '';
+//     store.dispatch(
+//       addGoalAction({
+//         id: generateId('goal'),
+//         name,
+//         complete: false,
+//       })
+//     );
+//   }
+// }
 
-todoButton.addEventListener('click', addTodo);
-goalButton.addEventListener('click', addGoal);
+// const todoButton = document.getElementById('todo-btn');
+// const goalButton = document.getElementById('goal-btn');
 
-function createRemoveBtn(onClick) {
-  const removeBtn = document.createElement('button');
-  removeBtn.innerHTML = 'X';
-  removeBtn.style.backgroundColor = 'red';
-  removeBtn.style.color = 'white';
+// todoButton.addEventListener('click', addTodo);
+// goalButton.addEventListener('click', addGoal);
 
-  removeBtn.addEventListener('click', onClick);
-  return removeBtn;
-}
+// function createRemoveBtn(onClick) {
+//   const removeBtn = document.createElement('button');
+//   removeBtn.innerHTML = 'X';
+//   removeBtn.style.backgroundColor = 'red';
+//   removeBtn.style.color = 'white';
 
-const todoList = document.getElementById('todo-list');
-function addTodoToDOM(todo) {
-  const node = document.createElement('li');
-  const text = document.createTextNode(todo.name);
-  const removeBtn = createRemoveBtn(() =>
-    store.dispatch(removeTodoAction(todo.id))
-  );
+//   removeBtn.addEventListener('click', onClick);
+//   return removeBtn;
+// }
 
-  node.appendChild(text);
-  node.appendChild(removeBtn);
+// const todoList = document.getElementById('todo-list');
+// function addTodoToDOM(todo) {
+//   const node = document.createElement('li');
+//   const text = document.createTextNode(todo.name);
+//   const removeBtn = createRemoveBtn(() =>
+//     store.dispatch(removeTodoAction(todo.id))
+//   );
 
-  node.style.textDecoration = todo.complete ? 'line-through' : 'none';
-  node.addEventListener('click', () =>
-    store.dispatch(toggleTodoAction(todo.id))
-  );
+//   node.appendChild(text);
+//   node.appendChild(removeBtn);
 
-  todoList.appendChild(node);
-}
+//   node.style.textDecoration = todo.complete ? 'line-through' : 'none';
+//   node.addEventListener('click', () =>
+//     store.dispatch(toggleTodoAction(todo.id))
+//   );
 
-const goalList = document.getElementById('goal-list');
-function addGoalToDOM(goal) {
-  const node = document.createElement('li');
-  const text = document.createTextNode(goal.name);
-  const removeBtn = createRemoveBtn(() =>
-    store.dispatch(removeGoalAction(goal.id))
-  );
+//   todoList.appendChild(node);
+// }
 
-  node.appendChild(text);
-  node.appendChild(removeBtn);
+// const goalList = document.getElementById('goal-list');
+// function addGoalToDOM(goal) {
+//   const node = document.createElement('li');
+//   const text = document.createTextNode(goal.name);
+//   const removeBtn = createRemoveBtn(() =>
+//     store.dispatch(removeGoalAction(goal.id))
+//   );
 
-  node.style.textDecoration = goal.complete ? 'line-through' : 'none';
-  node.addEventListener('click', () =>
-    store.dispatch(toggleGoalAction(goal.id))
-  );
+//   node.appendChild(text);
+//   node.appendChild(removeBtn);
 
-  goalList.appendChild(node);
-}
+//   node.style.textDecoration = goal.complete ? 'line-through' : 'none';
+//   node.addEventListener('click', () =>
+//     store.dispatch(toggleGoalAction(goal.id))
+//   );
+
+//   goalList.appendChild(node);
+// }
