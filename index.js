@@ -182,6 +182,15 @@ function goals(state = [], action) {
   }
 }
 
+function loading(state = true, action) {
+  switch (action.type) {
+    case RECIEVE_ITEMS:
+      return (state = false);
+    default:
+      return state;
+  }
+}
+
 // Combine Reducers
 // function app(state = {}, action) {
 //   return {
@@ -191,7 +200,7 @@ function goals(state = [], action) {
 // }
 
 const store = Redux.createStore(
-  Redux.combineReducers({ todos, goals }),
+  Redux.combineReducers({ todos, goals, loading }),
   Redux.applyMiddleware(checker, logger)
 );
 
