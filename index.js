@@ -42,45 +42,99 @@ const RECEIVE_ITEMS = 'RECEIVE_ITEMS';
 // Action creators
 function addTodoAction(todo) {
   return {
-    type: 'ADD_TODO',
-    todo: { ...todo },
+    type: ADD_TODO,
+    todo,
   };
 }
 function removeTodoAction(id) {
   return {
-    type: 'REMOVE_TODO',
+    type: REMOVE_TODO,
     id,
   };
 }
 function toggleTodoAction(id) {
   return {
-    type: 'TOGGLE_TODO',
+    type: TOGGLE_TODO,
     id,
   };
 }
 function addGoalAction(goal) {
   return {
-    type: 'ADD_GOAL',
-    goal: { ...goal },
+    type: ADD_GOAL,
+    goal,
   };
 }
 function removeGoalAction(id) {
   return {
-    type: 'REMOVE_GOAL',
+    type: REMOVE_GOAL,
     id,
   };
 }
 function toggleGoalAction(id) {
   return {
-    type: 'TOGGLE_GOAL',
+    type: TOGGLE_GOAL,
     id,
   };
 }
 function receiveItemsAction(todos, goals) {
   return {
-    type: 'RECEIVE_ITEMS',
+    type: RECEIVE_ITEMS,
     todos,
     goals,
+  };
+}
+function handleAddTodo(todo, callback) {
+  return (dispatch) => {
+    return API.saveTodo(todo)
+      .then((todo) => dispatch(addTodoAction(todo), callback()))
+      .catch(() => {
+        alert('An error occurred, please try again.');
+      });
+  };
+}
+function handleAddGoal(goal, callback) {
+  return (dispatch) => {
+    return API.saveGoal(goal)
+      .then((goal) => dispatch(addGoalAction(goal), callback()))
+      .catch(() => {
+        alert('An error occurred, please try again.');
+      });
+  };
+}
+function handleRemoveTodo(todo) {
+  return (dispatch) => {
+    dispatch(removeTodoAction(todo.id));
+    return API.deleteTodo(todo.id).catch(() => {
+      dispatch(addTodoAction(todo));
+      alert('An error occurred, please try again.');
+    });
+  };
+}
+function handleDeleteTodo(todo) {
+  return (dispatch) => {
+    dispatch(removeTodoAction(todo.id));
+    return API.deleteTodo(todo.id).catch(() => {
+      dispatch(addTodoAction(todo));
+      alert('An error occurred. Try again.');
+    });
+  };
+}
+function handleRemoveGoal(goal) {
+  return (dispatch) => {
+    dispatch(removeGoalAction(goal.id));
+    return API.deleteGoal(goal.id).catch(() => {
+      dispatch(addTodoAction(goal));
+      alert('An error occurred, please try again.');
+    });
+  };
+}
+function handleToggleTodo(todo) {
+  return (dispatch) => {
+    dispatch(toggleTodoAction(todo.id));
+    return API.saveTodoToggle(todo.id).catch(() => {
+      dispatch(toggleTodoAction(todo.id));
+      alert('An error occurred, please try again.');
+    });
   };
 }
 
@@ -97,7 +151,7 @@ function receiveItemsAction(todos, goals) {
 // }
 
 /* Middleware */
-// ES5 currying
+// Checker -- ES5 currying
 // function checker(store) {
 //   return function (next) {
 //     return function (action) {
@@ -113,7 +167,7 @@ function receiveItemsAction(todos, goals) {
 //   };
 // }
 
-// ES6 currying
+// Checker -- ES6 currying
 const checker = (store) => (next) => (action) => {
   if (
     action.type === ADD_TODO &&
@@ -128,11 +182,20 @@ const checker = (store) => (next) => (action) => {
 // Logger
 const logger = (store) => (next) => (action) => {
   console.group(action.type);
-  console.log('The action is: ', action.type);
+  console.log('The action is: ', action);
   const result = next(action);
   console.log('The new state is: ', store.getState());
   console.groupEnd();
   return result;
+};
+
+// Thunk
+const thunk = (store) => (next) => (action) => {
+  if (typeof action === 'function') {
+    return action(store.dispatch);
+  }
+
+  return next(action);
 };
 
 /* Reducers */
@@ -144,16 +207,16 @@ function todos(state = [], action) {
     case REMOVE_TODO:
       return state.filter((todo) => todo.id !== action.id);
     case TOGGLE_TODO:
-      return (state = state.map((todo) =>
+      return state.map((todo) =>
         todo.id !== action.id
           ? todo
           : {
               ...todo,
               complete: !todo.complete,
             }
-      ));
+      );
     case RECEIVE_ITEMS:
-      return state.concat(action.todos);
+      return action.todos;
     default:
       return state;
   }
@@ -167,25 +230,26 @@ function goals(state = [], action) {
     case REMOVE_GOAL:
       return state.filter((goal) => goal.id !== action.id);
     case TOGGLE_GOAL:
-      return (state = state.map((goal) =>
+      return state.map((goal) =>
         goal.id !== action.id
           ? goal
           : {
               ...goal,
               complete: !goal.complete,
             }
-      ));
+      );
     case RECEIVE_ITEMS:
-      return state.concat(action.goals);
+      return action.goals;
     default:
       return state;
   }
 }
 
+// Reducer function
 function loading(state = true, action) {
   switch (action.type) {
     case RECEIVE_ITEMS:
-      return (state = false);
+      return false;
     default:
       return state;
   }
@@ -201,7 +265,7 @@ function loading(state = true, action) {
 
 const store = Redux.createStore(
   Redux.combineReducers({ todos, goals, loading }),
-  Redux.applyMiddleware(checker, logger)
+  Redux.applyMiddleware(thunk, checker, logger)
 );
 
 /* Vanilla JS subscribe */
