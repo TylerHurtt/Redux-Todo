@@ -8,7 +8,9 @@
     <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
-    <script src="index.js" defer></script>
+    <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
+    <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
+    <script src="index.js"></script>
   </head>
   <body>
     <!-- Vanilla JS HTML -->
@@ -41,7 +43,7 @@
                   style={{
                     textDecoration: item.complete ? 'line-through' : 'none',
                   }}
-                  onClick={() => toggleComplete(item)}
+                  onClick={toggleComplete && (() => toggleComplete(item))}
                 >
                   {item.name}
                 </span>
@@ -60,20 +62,15 @@
       class Todos extends React.Component {
         addItem = (e) => {
           e.preventDefault();
-          const name = this.input.value;
-          this.input.value = '';
-          const todo = {
-            id: generateId('todo'),
-            name,
-            complete: false,
-          };
-          this.props.store.dispatch(addTodoAction(todo));
+          this.props.store.dispatch(
+            handleAddTodo(this.input.value, () => (this.input.value = ''))
+          );
         };
-        removeItem = (item) => {
-          this.props.store.dispatch(removeTodoAction(item.id));
+        removeItem = (todo) => {
+          this.props.store.dispatch(handleDeleteTodo(todo));
         };
-        toggleComplete = (item) => {
-          this.props.store.dispatch(toggleTodoAction(item.id));
+        toggleComplete = (todo) => {
+          this.props.store.dispatch(handleToggleTodo(todo));
         };
         render() {
           return (
@@ -100,20 +97,12 @@
       class Goals extends React.Component {
         addItem = (e) => {
           e.preventDefault();
-          const name = this.input.value;
-          this.input.value = '';
-          const goal = {
-            id: generateId('goal'),
-            name,
-            complete: false,
-          };
-          this.props.store.dispatch(addGoalAction(goal));
+          this.props.store.dispatch(
+            handleAddGoal(this.input.value, () => (this.input.value = ''))
+          );
         };
-        removeItem = (item) => {
-          this.props.store.dispatch(removeGoalAction(item.id));
-        };
-        toggleComplete = (item) => {
-          this.props.store.dispatch(toggleGoalAction(item.id));
+        removeItem = (goal) => {
+          this.props.store.dispatch(handleRemoveGoal(goal));
         };
         render() {
           return (
@@ -127,11 +116,7 @@
               <button id='goal-btn' onClick={this.addItem}>
                 Add Goal
               </button>
-              <List
-                items={this.props.goals}
-                removeItem={this.removeItem}
-                toggleComplete={this.toggleComplete}
-              />
+              <List items={this.props.goals} removeItem={this.removeItem} />
             </div>
           );
         }
@@ -141,13 +126,17 @@
         componentDidMount() {
           const { store } = this.props;
 
+          store.dispatch(handleReceiveItems());
           store.subscribe(() => this.forceUpdate());
         }
 
         render() {
           const { store } = this.props;
-          const { todos, goals } = store.getState();
-          return (
+          const { todos, goals, loading } = store.getState();
+
+          return loading ? (
+            <h1>Loading...</h1>
+          ) : (
             <div>
               <Todos store={store} todos={todos} />
               <Goals store={store} goals={goals} />
