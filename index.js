@@ -83,6 +83,15 @@ function receiveItemsAction(todos, goals) {
     goals,
   };
 }
+function handleReceiveItems() {
+  return async (dispatch) => {
+    const [todos, goals] = await Promise.all([
+      API.fetchTodos(),
+      API.fetchGoals(),
+    ]);
+    dispatch(receiveItemsAction(todos, goals));
+  };
+}
 function handleAddTodo(todo, callback) {
   return (dispatch) => {
     return API.saveTodo(todo)
@@ -123,7 +132,7 @@ function handleRemoveGoal(goal) {
   return (dispatch) => {
     dispatch(removeGoalAction(goal.id));
     return API.deleteGoal(goal.id).catch(() => {
-      dispatch(addTodoAction(goal));
+      dispatch(addGoalAction(goal));
       alert('An error occurred, please try again.');
     });
   };
@@ -189,14 +198,14 @@ const logger = (store) => (next) => (action) => {
   return result;
 };
 
-// Thunk
-const thunk = (store) => (next) => (action) => {
-  if (typeof action === 'function') {
-    return action(store.dispatch);
-  }
+// Custom Thunk
+// const thunk = (store) => (next) => (action) => {
+//   if (typeof action === 'function') {
+//     return action(store.dispatch);
+//   }
 
-  return next(action);
-};
+//   return next(action);
+// };
 
 /* Reducers */
 // Reducer function
@@ -265,7 +274,7 @@ function loading(state = true, action) {
 
 const store = Redux.createStore(
   Redux.combineReducers({ todos, goals, loading }),
-  Redux.applyMiddleware(thunk, checker, logger)
+  Redux.applyMiddleware(ReduxThunk.default, checker, logger)
 );
 
 /* Vanilla JS subscribe */
