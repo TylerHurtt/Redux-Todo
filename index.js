@@ -288,12 +288,12 @@ const store = Redux.createStore(
 //   goals.forEach((goal) => addGoalToDOM(goal));
 // });
 
-function generateId(listString) {
-  if (listString !== 'todo' && listString !== 'goal') throw new error();
-  return listString === 'todo'
-    ? store.getState().todos.length
-    : store.getState().goals.length;
-}
+// function generateId(listString) {
+//   if (listString !== 'todo' && listString !== 'goal') throw new error();
+//   return listString === 'todo'
+//     ? store.getState().todos.length
+//     : store.getState().goals.length;
+// }
 
 // Dom Code
 // const todoInput = document.getElementById('todo');
