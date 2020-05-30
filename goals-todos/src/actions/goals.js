@@ -27,9 +27,9 @@ export function handleAddGoal(goal, callback) {
 }
 export function handleRemoveGoal(goal) {
   return (dispatch) => {
-    dispatch(removeGoalAction(goal.id));
+    dispatch(removeGoal(goal.id));
     return API.deleteGoal(goal.id).catch(() => {
-      dispatch(addGoalAction(goal));
+      dispatch(addGoal(goal));
       alert('An error occurred, please try again.');
     });
   };

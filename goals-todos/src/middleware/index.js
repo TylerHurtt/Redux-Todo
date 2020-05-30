@@ -1,5 +1,5 @@
-import checker from '../middleware/checker';
-import logger from '../middleware/logger';
+import checker from './checker';
+import logger from './logger';
 import thunk from 'redux-thunk';
 import { applyMiddleware } from 'redux';
 
