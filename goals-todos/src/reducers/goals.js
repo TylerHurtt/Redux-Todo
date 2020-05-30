@@ -7,15 +7,6 @@ export default function goals(state = [], action) {
       return state.concat([action.goal]);
     case REMOVE_GOAL:
       return state.filter((goal) => goal.id !== action.id);
-    case TOGGLE_GOAL:
-      return state.map((goal) =>
-        goal.id !== action.id
-          ? goal
-          : {
-              ...goal,
-              complete: !goal.complete,
-            }
-      );
     case RECEIVE_ITEMS:
       return action.goals;
     default:

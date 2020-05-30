@@ -4,25 +4,23 @@ import ConnectedTodos from './Todos';
 import ConnectedGoals from './Goals';
 import { handleReceiveItems } from '../actions/shared';
 
-function App() {
-  class App extends React.Component {
-    componentDidMount() {
-      const { dispatch } = this.props;
+class App extends React.Component {
+  componentDidMount() {
+    const { dispatch } = this.props;
 
-      dispatch(handleReceiveItems());
-    }
-    render() {
-      const { loading } = this.props;
+    dispatch(handleReceiveItems());
+  }
+  render() {
+    const { loading } = this.props;
 
-      return loading ? (
-        <h1>Loading...</h1>
-      ) : (
-        <div>
-          <ConnectedTodos />
-          <ConnectedGoals />
-        </div>
-      );
-    }
+    return loading ? (
+      <h1>Loading...</h1>
+    ) : (
+      <div>
+        <ConnectedTodos />
+        <ConnectedGoals />
+      </div>
+    );
   }
 }
 
